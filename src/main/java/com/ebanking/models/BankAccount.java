@@ -5,30 +5,30 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.Loader;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.Date;
+import java.time.LocalDate;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
 @Table
-@Entity(name = "bank_account")
+@Entity(name = "bank_accounts")
 public class BankAccount {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    // Number must contain 15 digits
-    // 300 for country code
 
     private Boolean isDebit;
+
     private Double balance;
+
     private String accountNum;
+
     @CreationTimestamp
-    private LocalDateTime dateCreatedOn;
+    private LocalDate dateCreatedOn;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "currency_id")
@@ -38,7 +38,18 @@ public class BankAccount {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    public boolean canSubstractAmount(Double amount){
+    public BankAccount(Long id, Boolean isDebit, Double balance, String accountNum, LocalDate dateCreatedOn,
+                       CurrencyType currencyType) {
+
+        this.id = id;
+        this.isDebit = isDebit;
+        this.balance = balance;
+        this.accountNum = accountNum;
+        this.dateCreatedOn = dateCreatedOn;
+        this.currencyType = currencyType;
+    }
+
+    public boolean canSubstractAmount(Double amount) {
         return this.balance - amount > 0;
     }
 

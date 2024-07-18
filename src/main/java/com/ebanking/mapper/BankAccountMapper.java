@@ -2,31 +2,37 @@ package com.ebanking.mapper;
 
 import com.ebanking.dto.BankAccountDto;
 import com.ebanking.models.BankAccount;
+import com.ebanking.models.CurrencyType;
+import com.ebanking.models.UserEntity;
+import org.springframework.stereotype.Component;
 
-import static com.ebanking.mapper.CurrencyTypeMapper.*;
+import java.time.LocalDate;
 
+@Component
 public class BankAccountMapper {
     public static BankAccount mapToBankAccount(BankAccountDto bankAccountDto){
-        return BankAccount.builder()
-                .id(bankAccountDto.getId())
-                .accountNum(bankAccountDto.getAccountNum())
-                .isDebit(bankAccountDto.getIsDebit())
-                .balance(bankAccountDto.getBalance())
-                .currencyType(mapToCurrencyType(bankAccountDto.getCurrencyTypeDto()))
-                .dateCreatedOn(bankAccountDto.getDateCreatedOn())
-                .user(bankAccountDto.getUser())
-                .build();
+
+        Long id = bankAccountDto.id();
+        String accountNum = bankAccountDto.accountNum();
+        Boolean isDebit = bankAccountDto.isDebit();
+        Double balance = bankAccountDto.balance();
+        LocalDate dateCreatedOn = bankAccountDto.dateCreatedOn();
+        CurrencyType currencyType = bankAccountDto.currencyType();
+
+        return new BankAccount(id, isDebit, balance, accountNum, dateCreatedOn, currencyType);
     }
 
     public static BankAccountDto mapToBankAccountDto(BankAccount bankAccount){
-        return BankAccountDto.builder()
-                .id(bankAccount.getId())
-                .accountNum(bankAccount.getAccountNum())
-                .isDebit(bankAccount.getIsDebit())
-                .balance(bankAccount.getBalance())
-                .currencyTypeDto(mapToCurrencyTypeDto(bankAccount.getCurrencyType()))
-                .dateCreatedOn(bankAccount.getDateCreatedOn())
-                .user(bankAccount.getUser())
-                .build();
+
+        Long id = bankAccount.getId();
+        String accountNum = bankAccount.getAccountNum();
+        Boolean isDebit = bankAccount.getIsDebit();
+        Double balance = bankAccount.getBalance();
+        LocalDate dateCreatedOn = bankAccount.getDateCreatedOn();
+        CurrencyType currencyType = bankAccount.getCurrencyType();
+        UserEntity user = bankAccount.getUser();
+        String username = user.getUsername();
+
+        return new BankAccountDto(id, accountNum, isDebit, balance, dateCreatedOn, currencyType, username);
     }
 }

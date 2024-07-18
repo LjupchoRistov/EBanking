@@ -17,8 +17,9 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 @Table
-@Entity(name = "transaction")
+@Entity(name = "transactions")
 public class Transaction {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

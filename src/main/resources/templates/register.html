@@ -118,18 +118,6 @@
                                 th:field="*{address}">
                     </div>
                     <p th:if="${#fields.hasErrors('address')}" class="text-danger" th:errors="*{address}"></p>
-
-                    <div class="form-group inputDiv">
-                        <label>PIN</label>
-                        <input
-                                type="text"
-                                class="form-control"
-                                placeholder="Enter 4 digits..."
-                                pattern="\d{4}"
-                                title="PIN must be exactly 4 digits"
-                                th:field="*{pin}">
-                    </div>
-                    <p th:if="${#fields.hasErrors('pin')}" class="text-danger" th:errors="*{pin}"></p>
                     <hr>
                     <div class="row">
                         <div class="col-2">

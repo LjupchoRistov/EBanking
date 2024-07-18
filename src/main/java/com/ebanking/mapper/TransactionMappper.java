@@ -5,12 +5,12 @@ import com.ebanking.models.Transaction;
 import com.ebanking.repository.BankAccountRepository;
 import com.ebanking.repository.CurrencyTypeRepository;
 
-import static com.ebanking.mapper.CurrencyTypeMapper.*;
-import static com.ebanking.mapper.BankAccountMapper.*;
-
 public class TransactionMappper {
-    public static Transaction mapToTransaction(TransactionDto transactionDto, BankAccountRepository bankAccountRepository, CurrencyTypeRepository currencyTypeRepository){
-        return  Transaction.builder()
+
+    public static Transaction mapToTransaction(TransactionDto transactionDto,
+                                               BankAccountRepository bankAccountRepository,
+                                               CurrencyTypeRepository currencyTypeRepository) {
+        return Transaction.builder()
                 .id(transactionDto.getId())
                 .sender(bankAccountRepository.findByAccountNumEquals((transactionDto.getSender())))
                 .amount(Double.valueOf(transactionDto.getAmount()))
@@ -20,8 +20,8 @@ public class TransactionMappper {
                 .build();
     }
 
-    public static TransactionDto mapToTransactionDto(Transaction transaction){
-        return  TransactionDto.builder()
+    public static TransactionDto mapToTransactionDto(Transaction transaction) {
+        return TransactionDto.builder()
                 .id(transaction.getId())
                 .sender(transaction.getSender().getAccountNum().toString())
                 .amount(String.valueOf(transaction.getAmount()))

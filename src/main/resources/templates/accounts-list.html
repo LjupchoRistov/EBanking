@@ -15,6 +15,7 @@
 <style>
     .body-container {
         width: 1000px;
+        height: 100%;
         margin: 0 auto;
         border-left-style: solid;
         border-left-width: 2px;
@@ -95,17 +96,17 @@
             </div>
             <div class="row mb-4">
                 <ol class="breadcrumb mb-4">
-                    <li th:text="${user.getName()}" class="breadcrumb-item active"></li>
-                    <li th:text="${user.getSurname()}" class="breadcrumb-item active"></li>
+                    <li th:text="${user.name()}" class="breadcrumb-item active"></li>
+                    <li th:text="${user.surname()}" class="breadcrumb-item active"></li>
                 </ol>
                 <hr>
                 <div class="d-inline-flex mb-2">
                     <h5>
-                        <span class="fw-light" >Bank Accounts active: </span><span th:text="${bankAccountNum}"></span>
+                        <span class="fw-light" >Bank Accounts active: </span><span th:text="${activeBankAccounts}"></span>
                     </h5>
                 </div>
                 <div class="mb-4">
-                    <a th:class="${bankAccountNum < maxBankAccountNum} ? 'btn btn-dark' : 'disabled btn btn-dark'"
+                    <a th:class="${activeBankAccounts < maxBankAccountNum} ? 'btn btn-dark' : 'disabled btn btn-dark'"
                        th:href="@{'/user/account-new'}"
                     >Create new Bank Account</a>
                 </div>
@@ -131,13 +132,13 @@
                         <tr th:each="account : ${accounts}" style="cursor: pointer; margin-bottom: 5px;"
                             onmouseover="this.style.backgroundColor='rgba(119,136,153,0.44)'"
                             onmouseout="this.style.backgroundColor=''">
-                            <td class="cell_big" th:text="${account.getAccountNum()}">Account Number</td>
-                            <td class="cell_big" th:text="${account.getCurrencyTypeDto().getName()}">Currency Type</td>
-                            <td class="cell_small" th:text="${account.getBalance()}">Amount</td>
+                            <td class="cell_big" th:text="${account.accountNum()}">Account Number</td>
+                            <td class="cell_big" th:text="${account.currencyType().name}">Currency Type</td>
+                            <td class="cell_small" th:text="${account.balance()}">Amount</td>
                             <td class="cell_small">
-                                <span th:text="${account.getDateCreatedOn().getYear()}"></span>-<span
-                                    th:text="${account.getDateCreatedOn().getMonthValue()}"></span>-<span
-                                    th:text="${account.getDateCreatedOn().getDayOfMonth()}"></span>
+                                <span th:text="${account.dateCreatedOn().getYear()}"></span>-<span
+                                    th:text="${account.dateCreatedOn().getMonthValue()}"></span>-<span
+                                    th:text="${account.dateCreatedOn().getDayOfMonth()}"></span>
                             </td>
                             <td>
                                 <form th:action="@{/user/{id}/delete (id=${account.id})}" th:method="post">
@@ -147,7 +148,7 @@
                                 </form>
                             </td>
                             <td class="cell_small">
-                                <a th:href="@{'/user/{id}/account'(id=${account.getId()})}">More -></a>
+                                <a th:href="@{'/user/{id}/account'(id=${account.id()})}">More -></a>
                             </td>
                         </tr>
                         </tbody>

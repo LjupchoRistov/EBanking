@@ -1,28 +1,23 @@
 package com.ebanking.dto;
 
 import com.ebanking.models.CurrencyType;
-import com.ebanking.models.UserEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 
-import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.Date;
+import java.time.LocalDate;
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class BankAccountDto {
-    private Long id;
+public record BankAccountDto(
 
-    private String accountNum;
-    private Boolean isDebit;
-    private Double balance;
-    private LocalDateTime dateCreatedOn;
-    private CurrencyTypeDto currencyTypeDto;
-    private UserEntity user;
+        Long id,
+
+        String accountNum,
+
+        Boolean isDebit,
+
+        Double balance,
+
+        LocalDate dateCreatedOn,
+
+        CurrencyType currencyType,
+
+        String username
+) {
 }
