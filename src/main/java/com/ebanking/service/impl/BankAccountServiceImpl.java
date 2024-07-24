@@ -2,6 +2,7 @@ package com.ebanking.service.impl;
 
 import com.ebanking.dto.BankAccountDto;
 import com.ebanking.exceptions.BankAccountNotFound;
+import com.ebanking.exceptions.CurrencyTypeNotFoundException;
 import com.ebanking.mapper.BankAccountMapper;
 import com.ebanking.models.BankAccount;
 import com.ebanking.models.CurrencyType;
@@ -11,20 +12,20 @@ import com.ebanking.repository.CurrencyTypeRepository;
 import com.ebanking.repository.TransactionRepository;
 import com.ebanking.repository.UserRepository;
 import com.ebanking.service.BankAccountService;
-import org.springframework.security.core.userdetails.User;
+import com.ebanking.service.EncryptDataService;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 import static com.ebanking.mapper.BankAccountMapper.mapToBankAccountDto;
 
 @Service
+@AllArgsConstructor
 public class BankAccountServiceImpl implements BankAccountService {
 
     private final BankAccountRepository bankAccountRepository;
@@ -37,17 +38,7 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     private final CurrencyTypeRepository currencyTypeRepository;
 
-    private static final AtomicLong COUNTER = new AtomicLong(0);
-
-    public BankAccountServiceImpl(BankAccountRepository bankAccountRepository, BankAccountMapper bankAccountMapper,
-                                  TransactionRepository transactionRepository, UserRepository userRepository,
-                                  CurrencyTypeRepository currencyTypeRepository) {
-        this.bankAccountRepository = bankAccountRepository;
-        this.bankAccountMapper = bankAccountMapper;
-        this.transactionRepository = transactionRepository;
-        this.userRepository = userRepository;
-        this.currencyTypeRepository = currencyTypeRepository;
-    }
+    private final EncryptDataService encryptDataService;
 
     @Override
     public List<BankAccountDto> findBankAccountsByUser(UserEntity user) {
@@ -67,61 +58,49 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     @Override
-    public BankAccountDto findBankAccountById(Long id) {
+    public void createBankAccount(CurrencyType currency, Integer pin, String username) {
 
-        Optional<BankAccount> bankAccountOptional = this.bankAccountRepository.findById(id);
+        String currencyName = currency.getName();
 
-        if (bankAccountOptional.isEmpty()){
-            throw new BankAccountNotFound(id);
+        Optional<CurrencyType> currencyTypeOptional = currencyTypeRepository.findByNameEquals(currencyName);
+
+        if (currencyTypeOptional.isEmpty()) {
+            throw new CurrencyTypeNotFoundException(currencyName);
         }
 
-        BankAccount bankAccount = bankAccountOptional.get();
+        CurrencyType currencyType = currencyTypeOptional.get();
 
-        return mapToBankAccountDto(bankAccount);
-    }
+        String accountNum = generateAccountNumber(currencyType.getName());
 
-    @Override
-    public BankAccount createBankAccount(String currency, UserEntity user) {
-        // todo: generate account number
-        String accountNum = generateAccountNumber(currency);
-        CurrencyType currencyType = currencyTypeRepository.findByNameEquals(currency);
-        BankAccount bankAccount = new BankAccount();
-        boolean isDebit = currencyType.getName().equals("Macedonian Denar");
+        boolean isDebit = currencyName.equals("Macedonian Denar");
 
         Double balance = 0.0;
 
         LocalDate dateCreatedOn = LocalDate.now();
 
-        bankAccount.setDateCreatedOn(dateCreatedOn);
-        bankAccount.setBalance(balance);
-        bankAccount.setIsDebit(isDebit);
-        bankAccount.setAccountNum(accountNum);
-        bankAccount.setCurrencyType(currencyType);
-        bankAccount.setUser(user);
-        // Set other fields as necessary
+        UserEntity user = getUser(username);
 
-        // Save the bank account (assuming you have a repository or DAO)
-        // bankAccountRepository.save(bankAccountDto);
+        String salt = encryptDataService.createSalt();
 
-        return bankAccountRepository.save(bankAccount);
+        byte[] saltInBytes = salt.getBytes();
 
+        String combinedPinAndSalt = encryptDataService.combinePasswordAndSalt(String.valueOf(pin), saltInBytes);
+
+        String hashedPin = encryptDataService.hashPassword(combinedPinAndSalt);
+
+        BankAccount bankAccount = new BankAccount(accountNum, isDebit, balance, dateCreatedOn, currencyType, user,
+                hashedPin, salt);
+
+        bankAccountRepository.save(bankAccount);
     }
 
     private String generateAccountNumber(String currency) {
-        String prefix;
-        switch (currency) {
-            case "Macedonian Denar":
-                prefix = "MK";
-                break;
-            case "Euro":
-                prefix = "EU";
-                break;
-            case "United States Dollar":
-                prefix = "US";
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported currency: " + currency);
-        }
+        String prefix = switch (currency) {
+            case "Macedonian Denar" -> "MK";
+            case "Euro" -> "EU";
+            case "United States Dollar" -> "US";
+            default -> throw new IllegalArgumentException("Unsupported currency: " + currency);
+        };
 
         StringBuilder accountNum = new StringBuilder(prefix);
         for (int i = 0; i < 10; i++) {
@@ -142,13 +121,22 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     @Override
     public Integer availableBankAccounts(UserEntity user) {
-        //todo: change search with (EMBG)
+
         return MAX_BANK_ACCOUNTS - bankAccountRepository.findAllByUserEquals(user).size();
     }
 
     @Override
     public BankAccountDto findBankAccountByNumber(String sender) {
-        return mapToBankAccountDto(this.bankAccountRepository.findByAccountNumEquals(sender));
+
+        Optional<BankAccount> bankAccountOptional = bankAccountRepository.findByAccountNumEquals(sender);
+
+        if (bankAccountOptional.isEmpty()) {
+            throw new BankAccountNotFound(sender);
+        }
+
+        BankAccount bankAccount = bankAccountOptional.get();
+
+        return mapToBankAccountDto(bankAccount);
     }
 
     public BankAccount deleteBankAccount(Long id) {
@@ -157,11 +145,11 @@ public class BankAccountServiceImpl implements BankAccountService {
         return bankAccount;
     }
 
-    private UserEntity getUser(String username){
+    private UserEntity getUser(String username) {
 
         Optional<UserEntity> userOptional = userRepository.findByUsername(username);
 
-        if (userOptional.isEmpty()){
+        if (userOptional.isEmpty()) {
             throw new UsernameNotFoundException(username);
         }
 

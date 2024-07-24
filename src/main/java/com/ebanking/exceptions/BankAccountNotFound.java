@@ -1,9 +1,9 @@
 package com.ebanking.exceptions;
 
-public class BankAccountNotFound extends CustomNotFoundException{
+public class BankAccountNotFound extends CustomNotFoundException {
 
-    public BankAccountNotFound(Long id) {
+    public BankAccountNotFound(String bankAccountNumber) {
 
-        super("Bank account with id: " + id + " not found");
+        super("Bank account with number: " + bankAccountNumber + " not found");
     }
 }

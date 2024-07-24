@@ -1,23 +1,26 @@
 package com.ebanking.dto;
 
 import com.ebanking.models.CurrencyType;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-public record BankAccountDto(
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class BankAccountDto{
 
-        Long id,
+    String accountNum;
 
-        String accountNum,
+    Boolean isDebit;
 
-        Boolean isDebit,
+    Double balance;
 
-        Double balance,
+    LocalDate dateCreatedOn;
 
-        LocalDate dateCreatedOn,
+    CurrencyType currencyType;
 
-        CurrencyType currencyType,
-
-        String username
-) {
+    String username;
 }

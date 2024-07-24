@@ -1,18 +1,23 @@
 package com.ebanking.dto;
 
-public record UserDisplayDto(
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-        Long id,
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class UserDisplayDto {
 
-        String username,
+    private Long id;
 
-        String email,
+    private String username;
 
-        String name,
+    private String email;
 
-        String surname,
+    private String name;
 
-        String address
+    private String surname;
 
-) {
+    private String address;
 }

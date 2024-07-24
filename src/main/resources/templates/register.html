@@ -53,7 +53,7 @@
                 Passwords don't match
             </div>
             <div class="login-form p-200" style="padding-top: 20px">
-                <form method="post" role="form" th:action="@{/register/save}" th:object="${user}">
+                <form method="post" th:action="@{/register/save}" th:object="${user}">
                     <div class="form-group inputDiv">
                         <label>Username</label>
                         <input
@@ -73,8 +73,9 @@
                     </div>
                     <p th:if="${#fields.hasErrors('email')}" class="text-danger" th:errors="*{email}"></p>
                     <div class="form-group inputDiv">
-                        <label>Password</label>
+                        <label for="password">Password</label>
                         <input
+                                id="password"
                                 type="password"
                                 class="form-control"
                                 placeholder="Password"

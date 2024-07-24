@@ -18,14 +18,11 @@ import java.time.LocalDate;
 public class BankAccount {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String accountNum;
 
     private Boolean isDebit;
 
     private Double balance;
-
-    private String accountNum;
 
     @CreationTimestamp
     private LocalDate dateCreatedOn;
@@ -38,16 +35,9 @@ public class BankAccount {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    public BankAccount(Long id, Boolean isDebit, Double balance, String accountNum, LocalDate dateCreatedOn,
-                       CurrencyType currencyType) {
+    private String hashedPin;
 
-        this.id = id;
-        this.isDebit = isDebit;
-        this.balance = balance;
-        this.accountNum = accountNum;
-        this.dateCreatedOn = dateCreatedOn;
-        this.currencyType = currencyType;
-    }
+    private String salt;
 
     public boolean canSubstractAmount(Double amount) {
         return this.balance - amount > 0;
