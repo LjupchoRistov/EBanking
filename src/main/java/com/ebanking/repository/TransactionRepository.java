@@ -10,6 +10,11 @@ import java.util.List;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
+
     List<Transaction> findAllBySenderEquals(BankAccount sender);
+
     List<Transaction> findAllByReceiverEquals(BankAccount receiver);
+
+    List<Transaction> findAllBySender_AccountNumOrReceiver_AccountNum(String senderAccount,
+                                                                      String receiverAccount);
 }

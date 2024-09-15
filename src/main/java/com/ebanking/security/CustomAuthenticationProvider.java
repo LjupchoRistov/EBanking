@@ -16,6 +16,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
@@ -49,14 +50,14 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     private boolean authenticateUser(String username, String password) {
         //todo: get user from database
-        UserEntity targetUser = this.userService.findByUsername(username);
+        Optional<UserEntity> targetUser = this.userService.findByUsernameOptional(username);
 
-        if (targetUser == null)
+        if (targetUser.isEmpty())
             return false;
 
         //todo: get database credentials
-        String targetUserPassword = targetUser.getHashedPassword();
-        String targetUserSalt = targetUser.getSalt();
+        String targetUserPassword = targetUser.get().getHashedPassword();
+        String targetUserSalt = targetUser.get().getSalt();
 
         //todo: hash the input password
         String inputUserPassword = hashPassword(combinePasswordAndSalt(password, targetUserSalt.getBytes()));

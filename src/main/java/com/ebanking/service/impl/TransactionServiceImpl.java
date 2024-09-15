@@ -1,53 +1,46 @@
 package com.ebanking.service.impl;
 
-import com.ebanking.dto.BankAccountDto;
 import com.ebanking.dto.TransactionDto;
-import com.ebanking.mapper.TransactionMappper;
+import com.ebanking.exceptions.BankAccountNotFound;
+import com.ebanking.mapper.TransactionMapper;
 import com.ebanking.models.BankAccount;
 import com.ebanking.models.CurrencyType;
 import com.ebanking.models.Transaction;
 import com.ebanking.repository.BankAccountRepository;
-import com.ebanking.repository.CurrencyTypeRepository;
 import com.ebanking.repository.TransactionRepository;
 import com.ebanking.service.TransactionService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static com.ebanking.mapper.BankAccountMapper.*;
+import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
-    private final BankAccountRepository bankAccountRepository;
-    private final TransactionRepository transactionRepository;
-    private final CurrencyTypeRepository currencyTypeRepository;
 
-    public TransactionServiceImpl(BankAccountRepository bankAccountRepository, TransactionRepository transactionRepository, CurrencyTypeRepository currencyTypeRepository) {
-        this.bankAccountRepository = bankAccountRepository;
-        this.transactionRepository = transactionRepository;
-        this.currencyTypeRepository = currencyTypeRepository;
-    }
+    private final BankAccountRepository bankAccountRepository;
+
+    private final TransactionRepository transactionRepository;
+
+    private final TransactionMapper transactionMapper;
 
     @Override
-    public List<TransactionDto> findAllByBankAccount(BankAccountDto bankAccountDto) {
-        List<Transaction> sender = this.transactionRepository.findAllBySenderEquals(mapToBankAccount(bankAccountDto));
-        List<Transaction> receiver = this.transactionRepository.findAllByReceiverEquals(mapToBankAccount(bankAccountDto));
+    public List<TransactionDto> findAllByBankAccountNum(String bankAccountNum) {
 
-        List<Transaction> allTransactions = new ArrayList<>();
-        allTransactions.addAll(sender);
-        allTransactions.addAll(receiver);
+        List<Transaction> transactions = transactionRepository.findAllBySender_AccountNumOrReceiver_AccountNum(bankAccountNum, bankAccountNum);
 
-        return allTransactions.stream().map(TransactionMappper::mapToTransactionDto).collect(Collectors.toList());
+        return transactions.stream().map(transactionMapper::toTransactionDTO).toList();
     }
 
     @Override
     @Transactional
     public String createTransaction(TransactionDto transactionDto) {
-        BankAccount senderAcc = this.bankAccountRepository.findByAccountNumEquals((transactionDto.getSender()));
-        BankAccount receiverAcc = this.bankAccountRepository.findByAccountNumEquals((transactionDto.getReceiver()));
+
+        BankAccount senderAcc = getBankAccount(transactionDto.getSender());
+
+        BankAccount receiverAcc = getBankAccount(transactionDto.getReceiver());
 
         CurrencyType currencyTypeSender = senderAcc.getCurrencyType();
         CurrencyType currencyTypeReceiver = receiverAcc.getCurrencyType();
@@ -79,5 +72,16 @@ public class TransactionServiceImpl implements TransactionService {
         this.transactionRepository.save(transaction);
 
         return "Success";
+    }
+
+    private BankAccount getBankAccount(String accountNum) {
+
+        Optional<BankAccount> bankAccountOptional = this.bankAccountRepository.findByAccountNumEquals(accountNum);
+
+        if (bankAccountOptional.isEmpty()) {
+            throw new BankAccountNotFound(accountNum);
+        }
+
+        return bankAccountOptional.get();
     }
 }

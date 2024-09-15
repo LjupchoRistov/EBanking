@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
@@ -17,13 +18,14 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 @Table
-@Entity(name = "transaction")
+@Entity(name = "transactions")
 public class Transaction {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String Description;
+    private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id")
@@ -40,5 +42,5 @@ public class Transaction {
     private CurrencyType currencyTypeSender;
 
     @CreationTimestamp
-    private LocalDateTime transactionDate;
+    private LocalDate transactionDate;
 }

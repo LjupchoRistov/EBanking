@@ -44,7 +44,7 @@
         cursor: pointer;
     }
 
-    .body-container{
+    .body-container {
         width: 1000px;
         height: 3000px;
         margin: 0 auto;
@@ -56,6 +56,7 @@
         border-right-color: rgba(33, 37, 41, 0.66);
         background-color: whitesmoke;
     }
+
     .cell_big {
         width: 200px;
         margin-right: 5px;
@@ -70,18 +71,19 @@
         border-bottom-color: rgba(119, 136, 153, 0.62);
     }
 
-    .given{
+    .given {
         background-color: rgba(240, 128, 128, 0.5);
     }
 
-    .received{
+    .received {
         background-color: rgba(144, 238, 144, 0.5);
     }
 </style>
 <div class="body-container container-fluid mt-5">
     <div class="row justify-content-center">
         <!-- Popup container -->
-        <div id="popupContainer" class="popup-container" th:if="${!transactionValidation.isEmpty() && transactionValidation.equals('failed')}">
+        <div id="popupContainer" class="popup-container"
+             th:if="${!transactionValidation.isEmpty() && transactionValidation.equals('failed')}">
             <!-- Popup content -->
             <div class="popup-content">
                 <span class="close-btn" onclick="closePopup()">X</span>
@@ -137,15 +139,15 @@
                 <hr>
                 <div class="d-inline-flex">
                     <h5>
-                        <span class="fw-light" >Account number: </span><span th:text="${account.getAccountNum()}"></span>
+                        <span class="fw-light">Account number: </span><span th:text="${account.getAccountNum()}"></span>
                     </h5>
                 </div>
                 <div class="d-inline-flex">
                     <h5>
-                        <span class="fw-light" >Account balance: </span>
+                        <span class="fw-light">Account balance: </span>
                         <span th:text="${account.getBalance()}"></span>
                         <span class="fw-light">(</span>
-                        <span class="text-lowercase fw-light" th:text="${account.getCurrencyTypeDto().getName()}"></span>
+                        <span class="text-lowercase fw-light" th:text="${account.getCurrencyType().getName()}"></span>
                         <span class="fw-light">)</span>
                     </h5>
                 </div>
@@ -196,7 +198,8 @@
                         <!-- Sender account num. -->
                         <input type="hidden" th:field="*{sender}" th:value="${account.getAccountNum()}">
                         <!-- Sender account currency -->
-                        <input type="hidden" th:field="*{currencyTypeSender}" th:value="${account.getCurrencyTypeDto().getName()}">
+                        <input type="hidden" th:field="*{currencyTypeSender}"
+                               th:value="${account.getCurrencyType().getName()}">
                         <!-- Receiver account num. -->
                         <div class="form-group mb-3">
                             <label class="mb-2" for="receiverNum">Receiver Bank Account No. :</label>

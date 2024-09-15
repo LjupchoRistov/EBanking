@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class RoleController {
@@ -29,12 +30,12 @@ public class RoleController {
     @GetMapping("/users")
     public String listUsers(Model model){
         String username = SecurityUtil.getSessionUser();
-        UserEntity user = this.userService.findByUsername(username);
+        Optional<UserEntity> user = this.userService.findByUsernameOptional(username);
 
-        if (username == null || user == null)
+        if (username == null || user.isEmpty())
             return "redirect:/login";
 
-        List<Role> roles = user.getRoles();
+        List<Role> roles = user.get().getRoles();
         roles.removeIf(role -> !role.getName().equals("ADMIN"));
 
         if (roles.isEmpty())
@@ -51,20 +52,20 @@ public class RoleController {
     public String userRoles(Model model,
                             @PathVariable("userId") long userId){
         String sessionUsername = SecurityUtil.getSessionUser();
-        UserEntity sessionUser = this.userService.findByUsername(sessionUsername);
+        Optional<UserEntity> sessionUser = this.userService.findByUsernameOptional(sessionUsername);
 
-        if (sessionUsername == null || sessionUser == null)
+        if (sessionUsername == null || sessionUser.isEmpty())
             return "redirect:/login";
 
-        List<Role> roles = sessionUser.getRoles();
+        List<Role> roles = sessionUser.get().getRoles();
         roles.removeIf(role -> !role.getName().equals("ADMIN"));
 
         if (roles.isEmpty())
             return "redirect:/user/accounts";
 
-        UserEntity user = this.userService.findById(userId);
+        Optional<UserEntity> user = this.userService.findById(userId);
 
-        List<Role> userRoles = user.getRoles();
+        List<Role> userRoles = user.get().getRoles();
         List<Role> allRoles = this.roleService.findAll();
         List<Role> missingRoles = new ArrayList<>();
 
@@ -96,18 +97,18 @@ public class RoleController {
 
         try {
             Role role = this.roleService.findByName(roleName);
-            UserEntity user = this.userService.findById(userId);
+            Optional<UserEntity> user = this.userService.findById(userId);
 
-            if (role != null && user != null) {
-                List<Role> roles = user.getRoles();
+            if (role != null && user.isPresent()) {
+                List<Role> roles = user.get().getRoles();
                 roles.add(role);
-                user.setRoles(roles);
+                user.get().setRoles(roles);
             } else {
                 // Handle the case where role or user is not found
                 // You may want to redirect to an error page or log the issue
             }
 
-            this.userService.saveUser(user);
+            this.userService.saveUser(user.orElse(null));
 
             return "redirect:/users/" +
                     String.format("%d", userId) +
@@ -126,11 +127,11 @@ public class RoleController {
                              @RequestParam("roleId") long roleId) {
 
         try {
-            UserEntity user = this.userService.findById(userId);
-            List<Role> roles = user.getRoles();
+            Optional<UserEntity> user = this.userService.findById(userId);
+            List<Role> roles = user.get().getRoles();
             roles.removeIf(role -> role.getId().equals(roleId));
-            user.setRoles(roles);
-            this.userService.saveUser(user);
+            user.get().setRoles(roles);
+            this.userService.saveUser(user.orElse(null));
 
             return "redirect:/users/" +
                     String.format("%d", userId) +
