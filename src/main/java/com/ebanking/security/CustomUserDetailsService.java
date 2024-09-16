@@ -10,7 +10,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,12 +24,12 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<UserEntity> user = userRepository.findFirstByUsername(username);
-        if(user.isPresent()) {
+        UserEntity user = userRepository.findFirstByUsername(username);
+        if(user != null) {
             User authUser = new User(
-                    user.get().getEmail(),
-                    user.get().getHashedPassword(),
-                    user.get().getRoles().stream().map((role) -> new SimpleGrantedAuthority(role.getName()))
+                    user.getEmail(),
+                    user.getHashedPassword(),
+                    user.getRoles().stream().map((role) -> new SimpleGrantedAuthority(role.getName()))
                             .collect(Collectors.toList())
             );
             return authUser;

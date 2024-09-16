@@ -1,6 +1,5 @@
 package com.ebanking.service;
 
 public interface RecaptchaService {
-
-    boolean validateCaptcha(String captchaResponse);
+    public boolean validateCaptcha(String captchaResponse);
 }

@@ -14,8 +14,8 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
-    private final CustomUserDetailsService userDetailsService;
+    //todo: filters
+    private CustomUserDetailsService userDetailsService;
 
     @Autowired
     public SecurityConfig(CustomUserDetailsService userDetailsService) {
@@ -36,7 +36,7 @@ public class SecurityConfig {
                 .and()
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/user/accounts")
+                        .defaultSuccessUrl("/user/verify")
                         .loginProcessingUrl("/login")
                         .failureUrl("/login?error=true")
                         .permitAll()
