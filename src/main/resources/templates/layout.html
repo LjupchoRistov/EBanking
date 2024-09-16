@@ -23,7 +23,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 <li sec:authorize="!isAuthenticated()" class="nav-item"><a class="nav-link" th:href="@{/static}">Home</a></li>
-                <li sec:authorize="isAuthenticated()" class="nav-item"><a class="nav-link" th:href="@{/user/accounts}">Bank Accounts</a></li>
+                <li sec:authorize="isAuthenticated()" class="nav-item"><a class="nav-link" th:href="@{/user/verify}">Bank Accounts</a></li>
 
                 <li sec:authorize="!isAuthenticated()" class="nav-item"><a class="nav-link"
                                                                            th:href="@{/login}">Login</a></li>

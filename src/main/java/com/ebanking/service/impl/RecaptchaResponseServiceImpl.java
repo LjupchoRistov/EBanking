@@ -1,6 +1,6 @@
 package com.ebanking.service.impl;
 
-import com.ebanking.recaptcha.RecaptchaResponse;
+import com.ebanking.models.RecaptchaResponse;
 import com.ebanking.service.RecaptchaService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;

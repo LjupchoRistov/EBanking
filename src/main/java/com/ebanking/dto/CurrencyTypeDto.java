@@ -1,23 +1,16 @@
 package com.ebanking.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
+@Builder
 @NoArgsConstructor
-public class UserDisplayDto {
-
+@AllArgsConstructor
+public class CurrencyTypeDto {
     private Long id;
-
-    private String username;
-
-    private String email;
-
     private String name;
-
-    private String surname;
-
-    private String address;
+    private Float value;
 }

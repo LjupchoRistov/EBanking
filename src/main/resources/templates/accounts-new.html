@@ -38,11 +38,6 @@
         border-bottom-width: 1px;
         border-bottom-color: rgba(119, 136, 153, 0.62);
     }
-
-    .text-danger {
-        color: #dc3545;
-        font-size: 0.875rem;
-    }
 </style>
 <div class="body-container container-fluid mt-5 h-100">
     <div class="row justify-content-center">
@@ -95,50 +90,18 @@
                     <li th:text="${user.getSurname()}" class="breadcrumb-item active"></li>
                 </ol>
                 <hr>
-                <div class="d-flex justify-content-center mb-2">
-                    <form th:action="@{/user/account-new}" th:object="${form}" method="post">
-                        <div class="row">
-                            <div class="row mb-3">
-                                <div class="d-flex row mb-3">
-                                    <label for="currency" class="mb-1">Currency:</label>
-                                    <select th:field="*{currencyType}" id="currency" name="currency"
-                                            class="form-control">
-                                        <option th:each="c : ${currencies}" th:value="${c.getName()}"
-                                                th:text="${c.getName()}"></option>
-                                    </select>
-                                </div>
-                                <div class="row">
-                                    <span class="mb-1"><i>Pin must contain 6 digits</i></span>
-                                    <div class="col-lg-6">
-                                        <label for="pin">Enter pin:</label>
-                                        <input th:field="*{pin}" class="form-control d-inline-block" type="password"
-                                               id="pin"
-                                               name="pin"
-                                               inputmode="numeric" pattern="\d{6}" required style="width: 80px; margin-left: 15px">
-                                    </div>
-                                    <div class="col-lg-6">
-                                        <label for="repeatPin">Repeat pin:</label>
-                                        <input th:field="*{repeatPin}" class="form-control d-inline-block"
-                                               type="password"
-                                               id="repeatPin"
-                                               name="repeatPin" inputmode="numeric" pattern="\d{6}" required style="width: 80px; margin-left: 15px">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col">
-                                    <p th:if="${#fields.hasErrors('pin')}" class="text-danger"
-                                       th:errors="*{pin}"></p>
-                                </div>
-                                <div class="col">
-                                    <p th:if="${#fields.hasErrors('repeatPin')}" class="text-danger"
-                                       th:errors="*{repeatPin}"></p>
-                                </div>
-                            </div>
-                            <div class="col mb-3 d-flex justify-content-center w-25">
-                                <button type="submit" class="btn btn-primary">Submit</button>
-                            </div>
-                        </div>
+                <div class="d-inline-flex mb-2">
+                    <!--Basic info-->
+                    <!--Current date-->
+                    <a th:text="${date}"></a>
+                    <form th:action="@{/user/account-new}" th:object="${bankAccount}" method="post">
+                        <!--Currency Type-->
+                        <label for="currency"></label>
+                        <select id="currency" name="currency">
+                            <option th:each="c : ${currencies}" th:value="${c.getName()}" th:text="${c.getName()}"></option>
+                        </select>
+                        <br/>
+                        <button type="submit">Submit</button>
                     </form>
                 </div>
             </div>

@@ -2,25 +2,31 @@ package com.ebanking.mapper;
 
 import com.ebanking.dto.BankAccountDto;
 import com.ebanking.models.BankAccount;
-import com.ebanking.models.CurrencyType;
-import com.ebanking.models.UserEntity;
-import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
+import static com.ebanking.mapper.CurrencyTypeMapper.*;
 
-@Component
 public class BankAccountMapper {
+    public static BankAccount mapToBankAccount(BankAccountDto bankAccountDto){
+        return BankAccount.builder()
+                .id(bankAccountDto.getId())
+                .accountNum(bankAccountDto.getAccountNum())
+                .isDebit(bankAccountDto.getIsDebit())
+                .balance(bankAccountDto.getBalance())
+                .currencyType(mapToCurrencyType(bankAccountDto.getCurrencyTypeDto()))
+                .dateCreatedOn(bankAccountDto.getDateCreatedOn())
+                .user(bankAccountDto.getUser())
+                .build();
+    }
 
-    public static BankAccountDto mapToBankAccountDto(BankAccount bankAccount) {
-
-        String accountNum = bankAccount.getAccountNum();
-        Boolean isDebit = bankAccount.getIsDebit();
-        Double balance = bankAccount.getBalance();
-        LocalDate dateCreatedOn = bankAccount.getDateCreatedOn();
-        CurrencyType currencyType = bankAccount.getCurrencyType();
-        UserEntity user = bankAccount.getUser();
-        String username = user.getUsername();
-
-        return new BankAccountDto(accountNum, isDebit, balance, dateCreatedOn, currencyType, username);
+    public static BankAccountDto mapToBankAccountDto(BankAccount bankAccount){
+        return BankAccountDto.builder()
+                .id(bankAccount.getId())
+                .accountNum(bankAccount.getAccountNum())
+                .isDebit(bankAccount.getIsDebit())
+                .balance(bankAccount.getBalance())
+                .currencyTypeDto(mapToCurrencyTypeDto(bankAccount.getCurrencyType()))
+                .dateCreatedOn(bankAccount.getDateCreatedOn())
+                .user(bankAccount.getUser())
+                .build();
     }
 }
