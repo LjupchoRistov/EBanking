@@ -171,12 +171,11 @@ public class BankAccountController {
         return "accounts-details";
     }
 
-    @PostMapping("/user/{id}/delete")
-    public String deleteBankAccount(@PathVariable Long id) {
+    @PostMapping("/user/{bankAccountNumber}/delete")
+    public String deleteBankAccount(@PathVariable String bankAccountNumber) {
 
-        this.bankAccountService.deleteBankAccount(id);
+        this.bankAccountService.deleteBankAccount(bankAccountNumber);
         return "redirect:/user/accounts";
-
     }
 
     @GetMapping("/user/{bankAccountNum}/account-verify")

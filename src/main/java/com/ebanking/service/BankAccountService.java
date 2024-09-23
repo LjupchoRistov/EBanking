@@ -1,7 +1,6 @@
 package com.ebanking.service;
 
 import com.ebanking.dto.BankAccountDto;
-import com.ebanking.models.BankAccount;
 import com.ebanking.models.CurrencyType;
 import com.ebanking.models.UserEntity;
 
@@ -11,13 +10,11 @@ public interface BankAccountService {
 
     Integer MAX_BANK_ACCOUNTS = 5;
 
-    List<BankAccountDto> findBankAccountsByUser(UserEntity user);
-
     List<BankAccountDto> findBankAccountsByUsername(String username);
 
     void createBankAccount(CurrencyType currencyType, Integer pin, String username);
 
-    BankAccount deleteBankAccount(Long id);
+    void deleteBankAccount(String bankAccountNumber);
 
     BankAccountDto findBankAccountByNumber(String sender);
 

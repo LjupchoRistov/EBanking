@@ -17,4 +17,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     List<Transaction> findAllBySender_AccountNumOrReceiver_AccountNum(String senderAccount,
                                                                       String receiverAccount);
+    void deleteAllBySender_AccountNum(String senderAccount);
+
+    void deleteAllByReceiver_AccountNum(String receiverAccount);
 }

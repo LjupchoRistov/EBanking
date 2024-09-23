@@ -1,5 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html
+        xmlns:th="http://thymeleaf.org"
+        xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout}"
+        lang="en">
 <head>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
@@ -11,7 +15,7 @@
     <link href="/css/styles.css" rel="stylesheet"/>
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 </head>
-<body class="sb-nav-fixed">
+<body layout:fragment="body" class="sb-nav-fixed">
 <style>
     /* Popup container styles */
     .popup-container {
@@ -42,19 +46,6 @@
         top: 10px;
         right: 10px;
         cursor: pointer;
-    }
-
-    .body-container {
-        width: 1000px;
-        height: 3000px;
-        margin: 0 auto;
-        border-left-style: solid;
-        border-left-width: 2px;
-        border-left-color: rgba(33, 37, 41, 0.66);
-        border-right-style: solid;
-        border-right-width: 2px;
-        border-right-color: rgba(33, 37, 41, 0.66);
-        background-color: whitesmoke;
     }
 
     .cell_big {
@@ -150,6 +141,17 @@
                         <span class="text-lowercase fw-light" th:text="${account.getCurrencyType().getName()}"></span>
                         <span class="fw-light">)</span>
                     </h5>
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-md-2">
+                    <form method="post" th:action="@{'/user/{id}/delete'(id=${account.getAccountNum()})}">
+                        <button type="submit" class="btn btn-danger w-100">Delete</button>
+                    </form>
+                </div>
+                <div class="col-md-8"></div>
+                <div class="col-md-2 justify-content-end">
+                    <a class="btn btn-dark w-100" href="/user/accounts">Назад</a>
                 </div>
             </div>
             <!-- User Accounts Display-->

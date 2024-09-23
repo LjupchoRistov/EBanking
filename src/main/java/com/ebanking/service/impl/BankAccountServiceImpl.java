@@ -17,10 +17,10 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.ebanking.mapper.BankAccountMapper.mapToBankAccountDto;
 
@@ -30,22 +30,13 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     private final BankAccountRepository bankAccountRepository;
 
-    private final BankAccountMapper bankAccountMapper;
-
-    private final TransactionRepository transactionRepository;
-
     private final UserRepository userRepository;
 
     private final CurrencyTypeRepository currencyTypeRepository;
 
     private final EncryptDataService encryptDataService;
 
-    @Override
-    public List<BankAccountDto> findBankAccountsByUser(UserEntity user) {
-        List<BankAccount> bankAccounts = this.bankAccountRepository.findAllByUserEquals(user);
-
-        return bankAccounts.stream().map(BankAccountMapper::mapToBankAccountDto).collect(Collectors.toList());
-    }
+    private final TransactionRepository transactionRepository;
 
     @Override
     public List<BankAccountDto> findBankAccountsByUsername(String username) {
@@ -54,7 +45,7 @@ public class BankAccountServiceImpl implements BankAccountService {
 
         List<BankAccount> bankAccounts = this.bankAccountRepository.findAllByUserUsername(user.getUsername());
 
-        return bankAccounts.stream().map(BankAccountMapper::mapToBankAccountDto).collect(Collectors.toList());
+        return bankAccounts.stream().map(BankAccountMapper::mapToBankAccountDto).toList();
     }
 
     @Override
@@ -92,6 +83,16 @@ public class BankAccountServiceImpl implements BankAccountService {
                 hashedPin, salt);
 
         bankAccountRepository.save(bankAccount);
+    }
+
+    @Transactional
+    @Override
+    public void deleteBankAccount(String bankAccountNumber) {
+        bankAccountRepository.existsById(bankAccountNumber);
+
+        transactionRepository.deleteAllByReceiver_AccountNum(bankAccountNumber);
+        transactionRepository.deleteAllBySender_AccountNum(bankAccountNumber);
+        bankAccountRepository.deleteById(bankAccountNumber);
     }
 
     private String generateAccountNumber(String currency) {
@@ -137,12 +138,6 @@ public class BankAccountServiceImpl implements BankAccountService {
         BankAccount bankAccount = bankAccountOptional.get();
 
         return mapToBankAccountDto(bankAccount);
-    }
-
-    public BankAccount deleteBankAccount(Long id) {
-        BankAccount bankAccount = bankAccountRepository.findById(id).orElseThrow();
-        bankAccountRepository.deleteById(id);
-        return bankAccount;
     }
 
     private UserEntity getUser(String username) {
