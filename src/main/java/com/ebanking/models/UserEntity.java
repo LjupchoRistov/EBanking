@@ -15,25 +15,20 @@ import java.util.List;
 @AllArgsConstructor
 @Entity(name = "users")
 public class UserEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String username;
-
     private String email;
-
     private String name;
-
     private String surname;
-
     private String address;
-
     private String hashedPassword;
-
     private String salt;
-
+    private Integer pin;
+    private String hashPin;
+    private String pinSalt;
+    private boolean isPinInitialized = false;
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "users_roles",
@@ -41,14 +36,4 @@ public class UserEntity {
             inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")}
     )
     private List<Role> roles = new ArrayList<>();
-
-    public UserEntity(Long id, String username, String email, String name, String surname, String address) {
-
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.name = name;
-        this.surname = surname;
-        this.address = address;
-    }
 }
